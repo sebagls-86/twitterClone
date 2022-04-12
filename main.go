@@ -1,7 +1,17 @@
-// package main
+package main
 
-// import "fmt"
+import (
+	"log"
 
-// func main() {
+	"github.com/sebagls-86/twitterClone/bd"
+	"github.com/sebagls-86/twitterClone/handlers"
+)
 
-// }
+func main() {
+	if bd.ChequeoConnection() == 0 {
+		log.Fatal("Sin conexion a la BD")
+	}
+
+	handlers.Manejadores()
+
+}

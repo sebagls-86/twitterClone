@@ -10,11 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var MongoCN = ConectarBD()
+var MongoCN = ConnectBD()
 
 var error1 error
 
-func ConectarBD() *mongo.Client {
+func ConnectBD() *mongo.Client {
 
 	errorLoad := godotenv.Load()
 	if errorLoad != nil {
@@ -41,7 +41,7 @@ func ConectarBD() *mongo.Client {
 	return client
 }
 
-func ChequeoConnection() int {
+func CheckConnection() int {
 	err := MongoCN.Ping(context.TODO(), nil)
 	if err != nil {
 		log.Fatal(err.Error())

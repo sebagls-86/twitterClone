@@ -28,7 +28,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	_, userFound, _ := bd.CheckUserExist(t.Email)
 
-	if userFound == true {
+	if userFound {
 		http.Error(w, "Email already exist", 400)
 		return
 	}
@@ -40,7 +40,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if status == false {
+	if !status {
 		http.Error(w, "Something went wrong while registering the user: "+err.Error(), 400)
 		return
 	}

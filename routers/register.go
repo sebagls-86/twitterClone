@@ -22,7 +22,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(t.Password) < 6 {
-		http.Error(w, "Password minimu lenght 6 characters", 400)
+		http.Error(w, "Password minimum lenght 6 characters", 400)
 		return
 	}
 

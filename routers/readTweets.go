@@ -31,7 +31,7 @@ func ReadTweets(w http.ResponseWriter, r *http.Request) {
 
 	response, correct := bd.ReadTweets(ID, pag)
 	if !correct {
-		http.Error(w, "Error reading twwets", http.StatusBadRequest)
+		http.Error(w, "Error reading tweets", http.StatusBadRequest)
 		return
 	}
 

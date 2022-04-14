@@ -38,7 +38,7 @@ func ReadTweets(ID string, page int64) ([]*models.TweetsSender, bool) {
 	for cursor.Next(context.TODO()) {
 		var register models.TweetsSender
 
-		err := cursor.Decode((&register))
+		err := cursor.Decode(&register)
 
 		if err != nil {
 			return results, false

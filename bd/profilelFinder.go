@@ -15,7 +15,7 @@ func ProfileFinder(ID string) (models.User, error) {
 	defer cancel()
 
 	db := MongoCN.Database("twitterClone")
-	col := db.Collection(("users"))
+	col := db.Collection("users")
 
 	var profile models.User
 

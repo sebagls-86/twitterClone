@@ -20,7 +20,7 @@ func ReadTweets(ID string, page int64) ([]*models.TweetsSender, bool) {
 	var results []*models.TweetsSender
 
 	condition := bson.M{
-		"userid": ID,
+		"userId": ID,
 	}
 
 	opt := options.Find()

@@ -20,6 +20,12 @@ func Manejadores() {
 	router.HandleFunc("/modifyProfile", mdw.CheckBD(mdw.ValidateJWT(routers.ModifyProfile))).Methods("PUT")
 	router.HandleFunc("/tweet", mdw.CheckBD(mdw.ValidateJWT(routers.SaveTweet))).Methods("POST")
 	router.HandleFunc("/readTweets", mdw.CheckBD(mdw.ValidateJWT(routers.ReadTweets))).Methods("GET")
+	router.HandleFunc("/deleteTweet", mdw.CheckBD(mdw.ValidateJWT(routers.DeleteTweet))).Methods("DELETE")
+
+	router.HandleFunc("/uploadAvatar", mdw.CheckBD(mdw.ValidateJWT(routers.UploadAvatar))).Methods("POST")
+	router.HandleFunc("/loadAvatar", mdw.CheckBD(routers.LoadAvatar)).Methods("GET")
+	router.HandleFunc("/uploadBanner", mdw.CheckBD(mdw.ValidateJWT(routers.UploadBanner))).Methods("POST")
+	router.HandleFunc("/loadBanner", mdw.CheckBD(routers.LoadBanner)).Methods("GET")
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {

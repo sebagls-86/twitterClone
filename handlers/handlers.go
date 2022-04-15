@@ -11,7 +11,7 @@ import (
 	"github.com/sebagls-86/twitterClone/routers"
 )
 
-func Manejadores() {
+func Handlers() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/register", mdw.CheckBD(routers.Register)).Methods("POST")

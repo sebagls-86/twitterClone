@@ -16,6 +16,8 @@ var error1 error
 
 func ConnectBD() *mongo.Client {
 
+	ctx := context.TODO()
+
 	errorLoad := godotenv.Load()
 	if errorLoad != nil {
 		panic(error1)
@@ -25,7 +27,7 @@ func ConnectBD() *mongo.Client {
 
 	var clientOptions = options.Client().ApplyURI(mongodb)
 
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
 		return client
@@ -36,7 +38,7 @@ func ConnectBD() *mongo.Client {
 		return client
 	}
 
-	log.Println("Conexion exitosa")
+	log.Println("connection established")
 
 	return client
 }

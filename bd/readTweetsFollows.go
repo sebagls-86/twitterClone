@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func ReadTweetsFollowers(ID string, page int) ([]*models.TweetsFollowes, bool) {
+func ReadTweetsFollows(ID string, page int) ([]models.TweetsFollows, bool) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
@@ -19,12 +19,12 @@ func ReadTweetsFollowers(ID string, page int) ([]*models.TweetsFollowes, bool) {
 
 	conditions := make([]bson.M, 0)
 
-	conditions = append(conditions, bson.M{"$match": bson.M{"userid": ID}})
+	conditions = append(conditions, bson.M{"$match": bson.M{"userId": ID}})
 	conditions = append(conditions, bson.M{
 		"$lookup": bson.M{
 			"from":         "tweet",
-			"localField":   "userrelationid",
-			"foreignField": "userid",
+			"localField":   "userRelationId",
+			"foreignField": "userId",
 			"as":           "tweet",
 		}})
 
@@ -34,7 +34,7 @@ func ReadTweetsFollowers(ID string, page int) ([]*models.TweetsFollowes, bool) {
 	conditions = append(conditions, bson.M{"$limit": 20})
 
 	cursor, _ := col.Aggregate(ctx, conditions)
-	var result []*models.TweetsFollowes
+	var result []models.TweetsFollows
 	err := cursor.All(ctx, &result)
 
 	if err != nil {

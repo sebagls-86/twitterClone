@@ -32,7 +32,7 @@ func Manejadores() {
 	router.HandleFunc("/consultRelation", mdw.CheckBD(mdw.ValidateJWT(routers.ConsultRelation))).Methods("GET")
 
 	router.HandleFunc("/usersList", mdw.CheckBD(mdw.ValidateJWT(routers.UsersList))).Methods("GET")
-	router.HandleFunc("/readTweetsFollowers", mdw.CheckBD(mdw.ValidateJWT(routers.ReadTweetsRelations))).Methods("GET")
+	router.HandleFunc("/readTweetsFollows", mdw.CheckBD(mdw.ValidateJWT(routers.ReadTweetsRelations))).Methods("GET")
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {

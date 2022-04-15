@@ -6,10 +6,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type TweetsFollowes struct {
+type TweetsFollows struct {
 	ID             primitive.ObjectID `bson:"_id" json:"_id,omitempty"`
-	UserID         string             `bson:"userid" json:"userId,omitempty"`
-	UserRelationID string             `bson:"userrelationid" json:"userRelationId,omitempty"`
+	UserID         string             `bson:"userId" json:"userId,omitempty"`
+	UserRelationID string             `bson:"userRelationId" json:"userRelationId,omitempty"`
 	Tweet          struct {
 		Message string    `bson:"message" json:"message,omitempty"`
 		Date    time.Time `bson:"date" json:"date,omitempty"`

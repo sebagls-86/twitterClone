@@ -21,7 +21,7 @@ func ReadTweetsRelations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, correct := bd.ReadTweetsFollowers(IDUser, page)
+	response, correct := bd.ReadTweetsFollows(IDUser, page)
 	if !correct {
 		http.Error(w, "Error reading tweets", http.StatusBadRequest)
 		return

@@ -1,22 +1,22 @@
 package routers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 )
 
-func UsersList(w http.ResponseWriter, r *http.Request) {
+func UsersList(ctx *gin.Context) {
 
-	typeUser := r.URL.Query().Get("type")
-	page := r.URL.Query().Get("page")
-	searchType := r.URL.Query().Get("search")
+	typeUser := ctx.Query("type")
+	page := ctx.Query("page")
+	searchType := ctx.Query("search")
 
 	pagTemp, err := strconv.Atoi(page)
 	if err != nil {
-		http.Error(w, "Parameter page must be greater than 0 "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Parameter page must be greater than 0"})
 		return
 	}
 
@@ -24,12 +24,11 @@ func UsersList(w http.ResponseWriter, r *http.Request) {
 
 	result, status := bd.ReadAllUsers(IDUser, pag, searchType, typeUser)
 	if !status {
-		http.Error(w, "Error reading users "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Error reading users"})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(result)
+	ctx.JSON(http.StatusOK, result)
+	ctx.JSON(http.StatusOK, gin.H{"message": "Here I am"})
 
 }

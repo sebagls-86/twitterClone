@@ -1,60 +1,63 @@
 package routers
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"net/http"
-	"time"
 
+	//"time"
+
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
-	"github.com/sebagls-86/twitterClone/jwt"
+	jwt "github.com/sebagls-86/twitterClone/jwt"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("content-type", "application/json")
-
-	var t models.User
-
-	err := json.NewDecoder(r.Body).Decode(&t)
-
+func Login(ctx *gin.Context) {
+	var user models.User
+	err := ctx.ShouldBindJSON(&user)
 	if err != nil {
-		http.Error(w, "User or password incorrect"+err.Error(), 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
 		return
 	}
 
-	if len(t.Email) == 0 {
-		http.Error(w, "Email is required", 400)
+	if len(user.Email) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Email is required": err.Error()})
 		return
 	}
 
-	document, exist := bd.LoginAttempt(t.Email, t.Password)
+	document, exist := bd.LoginAttempt(user.Email, user.Password)
 
 	if !exist {
-		http.Error(w, "User or password incorrect"+err.Error(), 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
 		return
 	}
 
 	jwtKey, err := jwt.JWTGenerator(document)
 
 	if err != nil {
-		http.Error(w, "An error ocurred trying to generate token"+err.Error(), 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"An error ocurred trying to generate token": err.Error()})
 		return
 	}
+
+	//var w http.ResponseWriter
 
 	resp := models.LoginAnswer{
 		Token: jwtKey,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resp)
+	ctx.JSON(http.StatusOK, resp)
+	//json.NewEncoder(w).Encode(resp)
 
-	expirationTime := time.Now().Add(24 * time.Hour)
+	//expirationTime := time.Now().Add(24 * time.Hour)
 
-	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   jwtKey,
-		Expires: expirationTime,
-	})
+	ctx.SetCookie(
+		"token",
+		jwtKey,
+		60*60*24,
+		"/",
+		"localhost",
+		false,
+		true,
+	)
 
 }

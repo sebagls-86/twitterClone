@@ -3,16 +3,17 @@ package routers
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func EraseRelation(w http.ResponseWriter, r *http.Request) {
+func EraseRelation(ctx *gin.Context) {
 
-	ID := r.URL.Query().Get("id")
+	ID := ctx.Query("id")
 
 	if len(ID) < 1 {
-		http.Error(w, "We need the id parameter", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "We need the id parameter"})
 		return
 	}
 
@@ -23,15 +24,14 @@ func EraseRelation(w http.ResponseWriter, r *http.Request) {
 
 	status, err := bd.DeleteRelation(t)
 	if err != nil {
-		http.Error(w, "Something went wrong erasing the relation "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Something went wrong erasing the relation"})
 		return
 	}
 	if !status {
-		http.Error(w, "Couldn't delete relation "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Couldn't delete relation"})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	http.Error(w, "Relation borrada", 200)
+	ctx.JSON(http.StatusOK, gin.H{"message": "Relation erased"})
 
 }

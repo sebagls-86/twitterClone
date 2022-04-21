@@ -1,18 +1,24 @@
 package mdw
 
 import (
-	"net/http"
-
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 )
 
-func CheckBD(next http.HandlerFunc) http.HandlerFunc {
+var err error
 
-	return func(w http.ResponseWriter, r *http.Request) {
+func CheckBD(c gin.HandlerFunc) gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+
 		if bd.CheckConnection() == 0 {
-			http.Error(w, "Connection lost", 500)
+
+			c.Error(err)
 			return
 		}
-		next.ServeHTTP(w, r)
+
+		c.Next()
+
 	}
+
 }

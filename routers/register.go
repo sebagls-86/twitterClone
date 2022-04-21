@@ -1,51 +1,50 @@
 package routers
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func Register(ctx *gin.Context) {
+func Register(w http.ResponseWriter, r *http.Request) {
 	var t models.User
-	err := ctx.ShouldBindJSON(&t)
+	err := json.NewDecoder(r.Body).Decode(&t)
+
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
-		fmt.Println("paso por aca 1")
+		http.Error(w, "Something went wrong: "+err.Error(), 400)
 		return
 	}
 
 	if len(t.Email) == 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
+		http.Error(w, "Mail is required", 400)
 		return
 	}
 	if len(t.Password) < 6 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
+		http.Error(w, "Password minimum lenght 6 characters", 400)
 		return
 	}
 
 	_, userFound, _ := bd.CheckUserExist(t.Email)
 
 	if userFound {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
+		http.Error(w, "Email already exist", 400)
 		return
 	}
 
 	_, status, err := bd.NewRegister(t)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
+		http.Error(w, "Something went wrong trying to registe the user: "+err.Error(), 400)
 		return
 	}
 
 	if !status {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
+		http.Error(w, "Something went wrong while registering the user: "+err.Error(), 400)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "ok"})
+	w.WriteHeader(http.StatusCreated)
 
 }

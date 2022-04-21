@@ -1,19 +1,18 @@
 package mdw
 
 import (
-	//"net/http"
+	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/routers"
 )
 
-func ValidateJWT(c gin.HandlerFunc) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		_, _, _, err := routers.ProcessToken(c.GetHeader("Authorization"))
+func ValidateJWT(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, _, _, err := routers.ProcessToken(r.Header.Get("Authorization"))
 		if err != nil {
-			c.Error(err)
+			http.Error(w, "Authorization error"+err.Error(), http.StatusBadRequest)
 			return
 		}
-		c.Next()
+		next.ServeHTTP(w, r)
 	}
 }

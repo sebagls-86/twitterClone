@@ -1,63 +1,60 @@
 package routers
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"net/http"
+	"time"
 
-	//"time"
-
-	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
-	jwt "github.com/sebagls-86/twitterClone/jwt"
+	"github.com/sebagls-86/twitterClone/jwt"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func Login(ctx *gin.Context) {
-	var user models.User
-	err := ctx.ShouldBindJSON(&user)
+func Login(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("content-type", "application/json")
+
+	var t models.User
+
+	err := json.NewDecoder(r.Body).Decode(&t)
+
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
+		http.Error(w, "User or password incorrect"+err.Error(), 400)
 		return
 	}
 
-	if len(user.Email) == 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Email is required": err.Error()})
+	if len(t.Email) == 0 {
+		http.Error(w, "Email is required", 400)
 		return
 	}
 
-	document, exist := bd.LoginAttempt(user.Email, user.Password)
+	document, exist := bd.LoginAttempt(t.Email, t.Password)
 
 	if !exist {
-		ctx.JSON(http.StatusBadRequest, gin.H{"User or password incorrect": err.Error()})
+		http.Error(w, "User or password incorrect"+err.Error(), 400)
 		return
 	}
 
 	jwtKey, err := jwt.JWTGenerator(document)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"An error ocurred trying to generate token": err.Error()})
+		http.Error(w, "An error ocurred trying to generate token"+err.Error(), 400)
 		return
 	}
-
-	//var w http.ResponseWriter
 
 	resp := models.LoginAnswer{
 		Token: jwtKey,
 	}
 
-	ctx.JSON(http.StatusOK, resp)
-	//json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(resp)
 
-	//expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Now().Add(24 * time.Hour)
 
-	ctx.SetCookie(
-		"token",
-		jwtKey,
-		60*60*24,
-		"/",
-		"localhost",
-		false,
-		true,
-	)
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   jwtKey,
+		Expires: expirationTime,
+	})
 
 }

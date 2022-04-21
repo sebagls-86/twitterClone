@@ -1,22 +1,21 @@
 package routers
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func SaveTweet(ctx *gin.Context) {
+func SaveTweet(w http.ResponseWriter, r *http.Request) {
 
 	var message models.Tweet
 
-	err := ctx.ShouldBindJSON(&message)
-
+	err := json.NewDecoder(r.Body).Decode(&message)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Something went wrong": err.Error()})
+		http.Error(w, "Something went wrong: "+err.Error(), 400)
 		return
 	}
 
@@ -29,14 +28,14 @@ func SaveTweet(ctx *gin.Context) {
 	_, status, err := bd.InsertTweet(register)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"An error ocurred while trying to insert the register": err.Error()})
+		http.Error(w, "An error ocurred while trying to insert the register "+err.Error(), 400)
 		return
 	}
 	if !status {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Something went wrong while inserting the tweet": err.Error()})
+		http.Error(w, "Something went wrong while inserting the tweet ", 400)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Tweet posted"})
+	w.WriteHeader(http.StatusCreated)
 
 }

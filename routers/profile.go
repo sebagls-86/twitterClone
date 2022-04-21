@@ -1,28 +1,30 @@
 package routers
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 )
 
-func Profile(w http.ResponseWriter, r *http.Request) {
+func Profile(ctx *gin.Context) {
 
-	ID := r.URL.Query().Get("id")
+	var err error
+
+	ID := ctx.Query("id")
+
 	if len(ID) < 1 {
-		http.Error(w, "We need an ID number", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"We need the ID": err.Error()})
 		return
 	}
 
 	profile, err := bd.ProfileFinder(ID)
 	if err != nil {
-		http.Error(w, "Error trying to find the profile "+err.Error(), 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"We cant find the user": err.Error()})
 		return
 	}
 
-	w.Header().Set("context-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(profile)
+	ctx.JSON(http.StatusOK, profile)
 
 }

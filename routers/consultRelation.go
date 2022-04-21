@@ -1,18 +1,19 @@
 package routers
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func ConsultRelation(w http.ResponseWriter, r *http.Request) {
-	ID := r.URL.Query().Get("id")
+func ConsultRelation(ctx *gin.Context) {
+
+	ID := ctx.Query("id")
 
 	if len(ID) < 1 {
-		http.Error(w, "We need the id parameter", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "We need the id parameter"})
 		return
 	}
 
@@ -30,7 +31,6 @@ func ConsultRelation(w http.ResponseWriter, r *http.Request) {
 		resp.Status = true
 	}
 
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resp)
+	ctx.JSON(http.StatusOK, resp)
+
 }

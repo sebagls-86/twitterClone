@@ -1,43 +1,40 @@
 package routers
 
 import (
-	"encoding/json"
 	"net/http"
-	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 	"github.com/sebagls-86/twitterClone/jwt"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("content-type", "application/json")
+func Login(ctx *gin.Context) {
 
 	var t models.User
 
-	err := json.NewDecoder(r.Body).Decode(&t)
-
+	err := ctx.ShouldBindJSON(&t)
 	if err != nil {
-		http.Error(w, "User or password incorrect"+err.Error(), 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	if len(t.Email) == 0 {
-		http.Error(w, "Email is required", 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Email should be bigger than 0": err.Error()})
 		return
 	}
 
 	document, exist := bd.LoginAttempt(t.Email, t.Password)
 
 	if !exist {
-		http.Error(w, "User or password incorrect"+err.Error(), 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"The user already exist": err.Error()})
 		return
 	}
 
 	jwtKey, err := jwt.JWTGenerator(document)
 
 	if err != nil {
-		http.Error(w, "An error ocurred trying to generate token"+err.Error(), 400)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Token error": err.Error()})
 		return
 	}
 
@@ -45,16 +42,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Token: jwtKey,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resp)
+	ctx.JSON(http.StatusOK, resp)
 
-	expirationTime := time.Now().Add(24 * time.Hour)
-
-	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   jwtKey,
-		Expires: expirationTime,
-	})
+	ctx.SetCookie(
+		"token",
+		jwtKey,
+		60*60*24,
+		"/",
+		"localhost",
+		false,
+		true,
+	)
 
 }

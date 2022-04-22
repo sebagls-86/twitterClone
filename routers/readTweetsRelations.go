@@ -1,34 +1,32 @@
 package routers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 )
 
-func ReadTweetsRelations(w http.ResponseWriter, r *http.Request) {
+func ReadTweetsRelations(ctx *gin.Context) {
 
-	if len(r.URL.Query().Get("page")) < 1 {
-		http.Error(w, "We need the page parameter", http.StatusBadRequest)
+	if len(ctx.Query("page")) < 1 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"We need the page parameter": err.Error()})
 		return
 	}
 
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	page, err := strconv.Atoi(ctx.Query("page"))
 	if err != nil {
-		http.Error(w, "We need the page parameter in numbers", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"We need the page parameter in numbers": err.Error()})
 		return
 	}
 
 	response, correct := bd.ReadTweetsFollows(IDUser, page)
 	if !correct {
-		http.Error(w, "Error reading tweets", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error reading tweets": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	ctx.JSON(http.StatusOK, response)
 
 }

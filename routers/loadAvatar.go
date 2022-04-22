@@ -5,32 +5,34 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 )
 
-func LoadAvatar(w http.ResponseWriter, r *http.Request) {
-	ID := r.URL.Query().Get("id")
+func LoadAvatar(ctx *gin.Context) {
+
+	ID := ctx.Query("id")
 
 	if len(ID) < 1 {
-		http.Error(w, "We need the id parameter", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"We need the id parameter": err.Error()})
 		return
 	}
 
 	profile, err := bd.ProfileFinder(ID)
 	if err != nil {
-		http.Error(w, "No user found "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"No user found ": err.Error()})
 		return
 	}
 
 	OpenFile, err := os.Open("uploads/avatars/" + profile.Avatar)
 	if err != nil {
-		http.Error(w, "No image found", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"No image found ": err.Error()})
 		return
 	}
 
-	_, err = io.Copy(w, OpenFile)
+	_, err = io.Copy(ctx.Writer, OpenFile)
 	if err != nil {
-		http.Error(w, "Error copying the image", http.StatusBadRequest)
+		http.Error(ctx.Writer, "Error copying the image", http.StatusBadRequest)
 		return
 	}
 

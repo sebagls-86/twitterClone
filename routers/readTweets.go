@@ -1,29 +1,32 @@
 package routers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 )
 
-func ReadTweets(w http.ResponseWriter, r *http.Request) {
-	ID := r.URL.Query().Get("id")
+var err error
+
+func ReadTweets(ctx *gin.Context) {
+
+	ID := ctx.Query("id")
 
 	if len(ID) < 1 {
-		http.Error(w, "We need the id parameter", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"We need the id parameter": err.Error()})
 		return
 	}
 
-	if len(r.URL.Query().Get("page")) < 1 {
-		http.Error(w, "We need the page parameter", http.StatusBadRequest)
+	if len(ctx.Query("page")) < 1 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"We need the page parameter": err.Error()})
 		return
 	}
 
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	page, err := strconv.Atoi(ctx.Query("page"))
 	if err != nil {
-		http.Error(w, "The page parameter must be greater than 0", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"The page parameter must be greater than 0": err.Error()})
 		return
 	}
 
@@ -31,12 +34,10 @@ func ReadTweets(w http.ResponseWriter, r *http.Request) {
 
 	response, correct := bd.ReadTweets(ID, pag)
 	if !correct {
-		http.Error(w, "Error reading tweets", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error reading tweets": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	ctx.JSON(http.StatusOK, response)
 
 }

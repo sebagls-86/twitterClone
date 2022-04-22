@@ -6,15 +6,16 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func UploadBanner(w http.ResponseWriter, r *http.Request) {
+func UploadBanner(ctx *gin.Context) {
 
-	file, handler, err := r.FormFile("banner")
+	file, handler, err := ctx.Request.FormFile("banner")
 	if err != nil {
-		http.Error(w, "Something went wrong trying to read the image ! "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Something went wrong trying to read the image ": err.Error()})
 		return
 	}
 
@@ -23,28 +24,27 @@ func UploadBanner(w http.ResponseWriter, r *http.Request) {
 
 	f, err := os.OpenFile(avatarFile, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		http.Error(w, "Error while uploading the image ! "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error while uploading the image ! ": err.Error()})
 		return
 	}
 
 	_, err = io.Copy(f, file)
 	if err != nil {
-		http.Error(w, "Error while copying the image ! "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error while copying the image ! ": err.Error()})
 		return
 	}
 
 	var user models.User
 	var status bool
 
-	user.Banner = IDUser + "." + extension
+	user.Avatar = IDUser + "." + extension
 
 	status, err = bd.ChangeProfile(user, IDUser)
 	if err != nil || !status {
-		http.Error(w, "Error while cuploading the image to the BD ! "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error while cuploading the image to the BD ! ": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	ctx.JSON(http.StatusOK, gin.H{"message": "Upload successfully"})
 
 }

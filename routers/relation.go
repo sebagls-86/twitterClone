@@ -3,16 +3,17 @@ package routers
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sebagls-86/twitterClone/bd"
 	"github.com/sebagls-86/twitterClone/models"
 )
 
-func Relation(w http.ResponseWriter, r *http.Request) {
+func Relation(ctx *gin.Context) {
 
-	ID := r.URL.Query().Get("id")
+	ID := ctx.Query("id")
 
 	if len(ID) < 1 {
-		http.Error(w, "We need the id parameter", http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"We need the ID parameter": err.Error()})
 		return
 	}
 
@@ -23,15 +24,14 @@ func Relation(w http.ResponseWriter, r *http.Request) {
 
 	status, err := bd.InserRelation(t)
 	if err != nil {
-		http.Error(w, "Something went wrong in the relation "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Something went wrong in the relation": err.Error()})
 		return
 	}
 	if !status {
-		http.Error(w, "Couldn't insert relation "+err.Error(), http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Couldn't insert relation": err.Error()})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	http.Error(w, "Relation creada", 200)
+	ctx.JSON(http.StatusOK, gin.H{"message": "Relation created"})
 
 }

@@ -16,27 +16,27 @@ func Handlers() {
 
 	router := gin.Default()
 
-	router.POST("/register", mdw.CheckBD(routers.Register))
-	router.POST("/login", mdw.CheckBD(routers.Login))
+	router.POST("/register", routers.Register)
+	router.POST("/login", routers.Login)
 
-	router.GET("/profile", mdw.ValidateJWT(routers.Profile))
-	router.PUT("/modifyProfile", routers.ModifyProfile)
+	router.GET("/profile", routers.Profile, mdw.ValidateJWT(routers.Profile))
 
-	router.POST("/tweet", mdw.CheckBD(routers.SaveTweet))
-	router.GET("/readTweets", routers.ReadTweets)
-	router.DELETE("/deleteTweet", mdw.CheckBD(routers.DeleteTweet))
+	// router.PUT("/modifyProfile", mdw.CheckBD(mdw.ValidateJWT(routers.ModifyProfile)))
+	// router.POST("/tweet", mdw.CheckBD(mdw.ValidateJWT(routers.SaveTweet)))
+	// router.GET("/readTweets", mdw.CheckBD(mdw.ValidateJWT(routers.ReadTweets)))
+	// router.DELETE("/deleteTweet", mdw.CheckBD(mdw.ValidateJWT(routers.DeleteTweet)))
 
-	router.POST("/uploadAvatar", mdw.CheckBD(routers.UploadAvatar))
-	router.GET("/loadAvatar", routers.LoadAvatar)
-	router.POST("/uploadBanner", mdw.CheckBD(routers.UploadBanner))
-	router.GET("/loadBanner", routers.LoadBanner)
+	// router.POST("/uploadAvatar", mdw.CheckBD(mdw.ValidateJWT(routers.UploadAvatar)))
+	// router.GET("/loadAvatar", routers.LoadAvatar)
+	// router.POST("/uploadBanner", mdw.CheckBD(mdw.ValidateJWT(routers.UploadBanner)))
+	// router.GET("/loadBanner", routers.LoadBanner)
 
-	router.POST("/insertRelation", mdw.CheckBD(routers.Relation))
-	router.DELETE("/deleteRelation", mdw.CheckBD(routers.EraseRelation))
-	router.GET("/consultRelation", mdw.CheckBD(mdw.ValidateJWT(routers.ConsultRelation)))
+	// router.POST("/insertRelation", mdw.CheckBD(mdw.ValidateJWT(routers.Relation)))
+	// router.DELETE("/deleteRelation", mdw.CheckBD(mdw.ValidateJWT(routers.EraseRelation)))
+	// router.GET("/consultRelation", mdw.CheckBD(mdw.ValidateJWT(routers.ConsultRelation)))
 
-	router.GET("/usersList", mdw.CheckBD(mdw.ValidateJWT(routers.UsersList)))
-	router.GET("/readTweetsFollows", mdw.CheckBD(mdw.ValidateJWT(routers.ReadTweetsRelations)))
+	// router.GET("/usersList", mdw.CheckBD(mdw.ValidateJWT(routers.UsersList)))
+	// router.GET("/readTweetsFollows", mdw.CheckBD(mdw.ValidateJWT(routers.ReadTweetsRelations)))
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {

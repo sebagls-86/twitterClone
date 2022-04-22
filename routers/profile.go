@@ -1,7 +1,6 @@
 package routers
 
 import (
-	//"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +24,7 @@ func Profile(ctx *gin.Context) {
 		return
 	}
 
+	ctx.JSON(http.StatusOK, gin.H{"message": "paso por Profile"})
 	ctx.JSON(http.StatusOK, profile)
 
 }

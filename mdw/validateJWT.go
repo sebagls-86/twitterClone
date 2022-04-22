@@ -7,19 +7,18 @@ import (
 	"github.com/sebagls-86/twitterClone/routers"
 )
 
-func ValidateJWT(c gin.HandlerFunc) gin.HandlerFunc {
+func ValidateJWT() gin.HandlerFunc {
 
-	return func(ctx *gin.Context) {
-		_, _, _, err := routers.ProcessToken(ctx.GetHeader("Authorization"))
+	return func(c *gin.Context) {
+		_, _, _, err := routers.ProcessToken(c.GetHeader("Authorization"))
 		if err != nil {
-			ctx.Error(err)
-			ctx.JSON(http.StatusOK, gin.H{"message": "paso por ValidateJWT con error"})
+			c.JSON(http.StatusBadRequest, gin.H{"We cant find the user": err.Error()})
+			//panic("We cant find the user")
 			return
 		}
 
-		ctx.JSON(http.StatusOK, gin.H{"message": "paso por ValidateJWT"})
-		ctx.Request.Context()
+		c.JSON(http.StatusOK, gin.H{"message": "paso por JWT"})
+		c.Next()
 
 	}
-
 }

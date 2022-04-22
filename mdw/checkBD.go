@@ -14,10 +14,9 @@ func CheckBD(c gin.HandlerFunc) gin.HandlerFunc {
 		if bd.CheckConnection() == 0 {
 
 			c.Error(err)
+			//panic(c.Error(err))
 			return
 		}
-
-		c.Next()
 
 	}
 

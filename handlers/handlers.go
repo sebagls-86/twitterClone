@@ -19,7 +19,7 @@ func Handlers() {
 	router.POST("/register", routers.Register)
 	router.POST("/login", routers.Login)
 
-	router.GET("/profile", routers.Profile, mdw.ValidateJWT(routers.Profile))
+	router.GET("/profile", mdw.ValidateJWT(), routers.Profile)
 
 	// router.PUT("/modifyProfile", mdw.CheckBD(mdw.ValidateJWT(routers.ModifyProfile)))
 	// router.POST("/tweet", mdw.CheckBD(mdw.ValidateJWT(routers.SaveTweet)))

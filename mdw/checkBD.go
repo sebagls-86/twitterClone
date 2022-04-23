@@ -7,28 +7,19 @@ import (
 
 var err error
 
-func CheckBD(c gin.HandlerFunc) gin.HandlerFunc {
+func CheckBD(ctx gin.HandlerFunc) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
 		if bd.CheckConnection() == 0 {
 
 			c.Error(err)
-			//panic(c.Error(err))
 			return
 		}
+
+		ctx(c)
+		c.Next()
 
 	}
 
 }
-
-// func CheckBD(next http.HandlerFunc) http.HandlerFunc {
-
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		if bd.CheckConnection() == 0 {
-// 			http.Error(w, "Connection lost", 500)
-// 			return
-// 		}
-// 		next.ServeHTTP(w, r)
-// 	}
-// }

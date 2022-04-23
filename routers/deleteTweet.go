@@ -22,6 +22,6 @@ func DeleteTweet(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Tweet deleted" + ID + IDUser})
+	ctx.JSON(http.StatusOK, gin.H{"message": "Tweet deleted"})
 
 }

@@ -12,7 +12,7 @@ import (
 
 var MongoCN = ConnectBD()
 
-var error1 error
+//var error1 error
 
 func ConnectBD() *mongo.Client {
 
@@ -20,7 +20,8 @@ func ConnectBD() *mongo.Client {
 
 	errorLoad := godotenv.Load()
 	if errorLoad != nil {
-		panic(error1)
+		log.Fatal("estoy aca")
+		//panic(error1)
 	}
 
 	mongodb := os.Getenv("MONGODB_URI")

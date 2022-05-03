@@ -27,17 +27,22 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(t.Password) == 0 {
+		http.Error(w, "Password is required", 400)
+		return
+	}
+
 	document, exist := bd.LoginAttempt(t.Email, t.Password)
 
 	if !exist {
-		http.Error(w, "User or password incorrect"+err.Error(), 400)
+		http.Error(w, "User or password incorrect", 400)
 		return
 	}
 
 	jwtKey, err := jwt.JWTGenerator(document)
 
 	if err != nil {
-		http.Error(w, "An error ocurred trying to generate token"+err.Error(), 400)
+		http.Error(w, "An error ocurred trying to generate token", 400)
 		return
 	}
 

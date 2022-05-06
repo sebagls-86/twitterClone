@@ -23,7 +23,7 @@ func ChangeProfile(u models.User, ID string) (bool, error) {
 	}
 
 	if len(u.LastName) > 0 {
-		register["name"] = u.Name
+		register["lastName"] = u.LastName
 	}
 
 	register["birthDay"] = u.BirthDay

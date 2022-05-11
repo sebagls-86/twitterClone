@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,10 +15,10 @@ func ConnectBD() *mongo.Client {
 
 	ctx := context.TODO()
 
-	errorLoad := godotenv.Load()
-	if errorLoad != nil {
-		log.Fatal("estoy aca")
-	}
+	// errorLoad := godotenv.Load()
+	// if errorLoad != nil {
+	// 	log.Fatal("estoy aca")
+	// }
 
 	mongodb := os.Getenv("MONGODB_URI")
 

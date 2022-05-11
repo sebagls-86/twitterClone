@@ -12,8 +12,6 @@ import (
 
 var MongoCN = ConnectBD()
 
-//var error1 error
-
 func ConnectBD() *mongo.Client {
 
 	ctx := context.TODO()
@@ -21,7 +19,6 @@ func ConnectBD() *mongo.Client {
 	errorLoad := godotenv.Load()
 	if errorLoad != nil {
 		log.Fatal("estoy aca")
-		//panic(error1)
 	}
 
 	mongodb := os.Getenv("MONGODB_URI")
